@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 320x180 banner: espresso leather with a burnt-orange stitch line -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="320dp" android:height="180dp">
+        <shape android:shape="rectangle">
+            <gradient android:angle="315" android:startColor="#2A170D" android:endColor="#7A3A16" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <item android:width="320dp" android:height="180dp" android:top="10dp" android:left="10dp" android:right="10dp" android:bottom="10dp">
+        <shape android:shape="rectangle">
+            <stroke android:width="2dp" android:color="#C8641F" android:dashWidth="8dp" android:dashGap="5dp" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</layer-list>
