@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anthony's TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* 1rem = 1px of a 1920-wide screen, so the layout scales to any TV */
+  html { font-size: calc(100vw / 1920); }
+  :root {
+    --espresso: #120b07; --cognac: #8a4a22; --tobacco: #a5662f; --orange: #d4651c; --ember: #ff8a3d;
+    --cream: #efe3cf; --muted: #b9a68d; --silver: #c9c6c0;
+    --serif: 'Playfair Display', 'Didot', Georgia, serif;
+    --num: 'Fraunces', 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 100vw; height: 100vh; overflow: hidden; color: var(--cream); font-family: var(--sans);
+    background: var(--espresso); -webkit-font-smoothing: antialiased; cursor: none; }
+
+  /* warm amber corner light (bigger, same color) + leather grain + vignette */
+  .room { position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 95% 85% at 0% 0%, rgba(212,101,28,.32), rgba(212,101,28,.10) 45%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 92% 100%, rgba(138,74,34,.28), transparent 65%),
+      linear-gradient(160deg, #1d0f08 0%, #120b07 55%, #0b0604 100%); }
+  .grain { position: fixed; inset: 0; opacity: .22; mix-blend-mode: overlay; pointer-events: none; }
+  .vignette { position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.6) 100%); }
+
+  main { position: relative; height: 100%; padding: 64rem 96rem 56rem; display: grid;
+    grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; column-gap: 72rem; }
+  .top-left { grid-column: 1; grid-row: 1; }
+
+  /* ---------- clock / date / weather ---------- */
+  .kicker { font: 600 15rem/1 var(--sans); letter-spacing: .42em; text-transform: uppercase; color: var(--tobacco); }
+  .clock { font: 700 164rem/0.95 var(--num); letter-spacing: -.01em; margin-top: 18rem; color: var(--cream);
+    font-variant-numeric: lining-nums;
+    text-shadow: 0 2rem 0 rgba(255,255,255,.06), 0 30rem 60rem rgba(0,0,0,.7); }
+  .clock .ampm { font: 500 50rem/1 var(--sans); color: var(--orange); margin-left: 14rem; letter-spacing: 0; }
+  .date { font: 500 36rem/1.2 var(--sans); color: var(--muted); margin-top: 12rem; }
+
+  .weather { display: flex; width: 680rem; align-items: center; gap: 26rem; margin-top: 26rem; padding: 16rem 40rem 16rem 18rem;
+    border-radius: 60rem; background: linear-gradient(180deg, #3a1f10, #24130a);
+    box-shadow: inset 0 1rem 0 rgba(255,220,180,.12), inset 0 -2rem 6rem rgba(0,0,0,.5), 0 18rem 40rem rgba(0,0,0,.55); }
+  .weather .orb { width: 70rem; height: 70rem; border-radius: 50%; display: grid; place-items: center; font-size: 32rem;
+    background: radial-gradient(circle at 35% 30%, #ffb070, var(--orange) 45%, #6a2a0a 100%);
+    box-shadow: 0 8rem 22rem rgba(212,101,28,.45), inset 0 -4rem 8rem rgba(0,0,0,.35); }
+  .weather .line1 { display: flex; align-items: baseline; gap: 16rem; }
+  .weather .temp { font: 700 48rem/1 var(--num); }
+  .weather .desc { font: 500 20rem/1.3 var(--sans); }
+  .weather .feels { font: 500 18rem/1.3 var(--sans); color: var(--ember); margin-top: 6rem; }
+  .weather .feels b { font: 700 20rem/1 var(--num); color: var(--cream); }
+  .weather .meta { font: 400 15rem/1.3 var(--sans); color: var(--muted); letter-spacing: .04em; margin-top: 4rem; }
+  .weather .meta b { font: 600 16rem/1 var(--num); color: var(--cream); }
+
+  /* ---------- focus card (stitched leather) ---------- */
+  .focus { grid-column: 2; grid-row: 1; align-self: stretch; position: relative; padding: 40rem 52rem 34rem; display: flex; flex-direction: column; border-radius: 28rem;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(255,190,130,.18), transparent 55%),
+      linear-gradient(155deg, #9a5426 0%, #6e3415 55%, #4a210c 100%);
+    box-shadow: inset 0 2rem 0 rgba(255,225,190,.25), inset 0 -10rem 30rem rgba(0,0,0,.35),
+      0 50rem 90rem rgba(0,0,0,.7), 0 14rem 24rem rgba(0,0,0,.5);
+    transform: rotate(-.5deg); }
+  .focus::before { content: ''; position: absolute; inset: 14rem; border-radius: 18rem;
+    border: 2rem dashed rgba(255,214,170,.45); pointer-events: none; }
+  .focus .grain-in { position: absolute; inset: 0; border-radius: 28rem; opacity: .35; mix-blend-mode: multiply; pointer-events: none; }
+  .focus h2 { font: 600 40rem/1 var(--sans); color: #fff3e2; text-shadow: 0 2rem 4rem rgba(0,0,0,.4); position: relative; }
+  .focus .sub { font: 600 13rem/1 var(--sans); letter-spacing: .36em; text-transform: uppercase; color: rgba(255,226,196,.7); margin: 10rem 0 14rem; position: relative; }
+  .focus ul { list-style: none; position: relative; display: grid; grid-auto-flow: column; grid-template-rows: repeat(4, auto); column-gap: 40rem; row-gap: 2rem; align-content: start; }
+  .focus li { display: flex; align-items: baseline; gap: 16rem; padding: 8rem 14rem; border-radius: 12rem;
+    font: 500 22rem/1.3 var(--sans); color: #fff1de; transition: transform .18s, background .18s, box-shadow .18s; }
+  .focus li .dash { flex: none; color: rgba(255,214,170,.85); font-weight: 600; }
+  .focus li.done .txt { color: rgba(255,236,214,.45); text-decoration: line-through; text-decoration-color: rgba(255,214,170,.7); text-decoration-thickness: 2rem; }
+  .focus li.done .dash { color: rgba(255,214,170,.35); }
+  .focus li.focused { background: rgba(18,11,7,.42); transform: translateX(8rem);
+    box-shadow: inset 0 0 0 2rem var(--ember), 0 10rem 24rem rgba(0,0,0,.35); }
+  .focus .empty { display: block; font: 400 19rem/1.5 var(--sans); color: rgba(255,236,214,.75); }
+  .focus .empty code { font: 500 17rem/1 ui-monospace, Menlo, monospace; background: rgba(0,0,0,.3); padding: 3rem 8rem; border-radius: 6rem; }
+
+  /* ---------- apps: rotation 3x2 on the left, everything else on the right ---------- */
+  .apps { grid-column: 1 / span 2; align-self: end; display: grid; grid-template-columns: auto 1fr; column-gap: 72rem; align-items: end; margin-top: 30rem; }
+  .rotation-title { font: 600 24rem/1 var(--sans); letter-spacing: .42em; text-transform: uppercase; color: var(--tobacco); margin: 0 0 4rem 4rem; }
+  .grid { display: grid; gap: 26rem; padding: 26rem 16rem 22rem; margin: 0 -16rem; }
+  .grid.favs { grid-template-columns: repeat(3, 312rem); }
+  .grid.rest { grid-template-columns: repeat(3, 1fr); gap: 22rem; max-height: 430rem; overflow: hidden; align-content: end; }
+  .tile { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 18rem; overflow: hidden;
+    background: linear-gradient(160deg, #3b2012, #1f1009);
+    box-shadow: inset 0 1rem 0 rgba(255,220,180,.15), 0 26rem 50rem rgba(0,0,0,.65), 0 8rem 14rem rgba(0,0,0,.5);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tile .label { position: absolute; inset: auto 0 0 0; padding: 34rem 16rem 12rem; font: 600 18rem/1.1 var(--sans);
+    background: linear-gradient(transparent, rgba(10,5,3,.85)); color: var(--cream); }
+  .tile .letter { position: absolute; inset: 0; display: grid; place-items: center; font: 600 64rem/1 var(--sans); color: rgba(239,227,207,.9); }
+  .tile .icon { position: absolute; top: 20rem; left: 50%; width: 68rem; height: 68rem; transform: translateX(-50%); object-fit: contain; }
+  .tile::after { content: ''; position: absolute; inset: 0; border-radius: 18rem; pointer-events: none;
+    background: linear-gradient(155deg, rgba(255,255,255,.16), transparent 38%); }
+  .tile.focused { transform: translateY(-10rem) scale(1.07); z-index: 2;
+    box-shadow: 0 0 0 4rem var(--orange), 0 0 46rem rgba(255,138,61,.55), 0 40rem 80rem rgba(0,0,0,.8); }
+</style>
+</head>
+<body>
+<div class="room"></div>
+<svg class="grain" width="100%" height="100%"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .35  0 0 0 0 .2  0 0 0 1 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+<div class="vignette"></div>
+
+<main>
+  <section class="top-left">
+    <div class="kicker">Anthony's TV</div>
+    <div class="clock"><span id="time">9:41</span><span class="ampm" id="ampm">pm</span></div>
+    <div class="date" id="date">Thursday, 12th of November</div>
+    <div class="weather">
+      <div class="orb" id="wicon">·</div>
+      <div>
+        <div class="line1"><span class="temp" id="wtemp">--°</span><span class="desc" id="wdesc">Fetching the sky…</span></div>
+        <div class="feels" id="wfeels"></div>
+        <div class="meta" id="wmeta">New Haven</div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="focus">
+    <svg class="grain-in" width="100%" height="100%"><rect width="100%" height="100%" filter="url(#n)"/></svg>
+    <h2 id="ftitle">Today's Focus</h2>
+    <div class="sub" id="fcount"></div>
+    <ul id="focus"></ul>
+  </aside>
+
+  <section class="apps">
+    <div>
+      <div class="grid favs" id="favs"></div>
+    </div>
+    <div class="grid rest" id="rest"></div>
+  </section>
+</main>
+
+<script>
+/* ---------- data ---------- */
+const FAVS = ['com.netflix.ninja','com.google.android.youtube.tv','com.hulu.livingroomplus',
+              'com.wbd.stream','com.disney.disneyplus','com.spotify.tv.android'];
+const WEATHER = { lat: 41.31, lon: -72.93, place: 'New Haven' };
+
+const onTV = typeof window.Home !== 'undefined';
+const Bridge = onTV ? window.Home : {   // browser preview: fake data
+  apps: () => JSON.stringify([
+    ['Netflix','com.netflix.ninja'],['YouTube','com.google.android.youtube.tv'],['Hulu','com.hulu.livingroomplus'],
+    ['Max','com.wbd.stream'],['Disney+','com.disney.disneyplus'],['Spotify','com.spotify.tv.android'],
+    ['Google Play Store','com.android.vending'],['Live TV','com.mediatek.wwtv.tvcenter'],['Media Player','com.mediatek.wwtv.mediaplayer'],
+    ['Play Movies & TV','com.google.android.videos'],['Settings','com.android.tv.settings']].map(([name,pkg]) => ({name, pkg, banner:'', icon:''}))),
+  launch: p => console.log('launch', p), settings: () => {},
+  getFocus: () => localStorage.getItem('focus') || JSON.stringify([
+    {t:'Finish the essay draft',done:false},{t:'Read 20 pages',done:true},{t:'Workout',done:false},{t:'Call home',done:false}]),
+  setFocus: j => localStorage.setItem('focus', j)
+};
+
+/* ---------- clock ---------- */
+const ord = n => n + (n%100>10&&n%100<14 ? 'th' : ({1:'st',2:'nd',3:'rd'}[n%10] || 'th'));
+function tick() {
+  const d = new Date(), h = d.getHours();
+  time.textContent = ((h % 12) || 12) + ':' + String(d.getMinutes()).padStart(2,'0');
+  ampm.textContent = h < 12 ? 'am' : 'pm';
+  const day = d.toLocaleDateString('en-US',{weekday:'long'});
+  date.textContent = day + ', ' + ord(d.getDate()) + ' of ' + d.toLocaleDateString('en-US',{month:'long'});
+  ftitle.textContent = day + "'s Focus";
+}
+
+/* ---------- weather (Open-Meteo, no key) ---------- */
+const WMO = c => c===0?['Clear','☀']:c<=2?['Partly cloudy','◐']:c===3?['Overcast','☁']:c<=48?['Fog','≋']
+  :c<=57?['Drizzle','☂']:c<=67?['Rain','☂']:c<=77?['Snow','❄']:c<=82?['Showers','☂']:c<=86?['Snow showers','❄']:['Thunderstorms','ϟ'];
+// feels-like label from the feels-like temperature (°F); wind only splits the 55–69 band
+function vibe(f, windMph) {
+  if (f < 20) return 'super cold';
+  if (f < 40) return 'cold';
+  if (f < 55) return 'kinda cold';
+  if (f < 70) return windMph >= 12 ? 'warm sun, cold breeze' : 'warm and sunny';
+  if (f < 80) return 'kinda hot';
+  if (f < 90) return 'hot';
+  return 'super hot out';
+}
+async function weather() {
+  try {
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER.lat}&longitude=${WEATHER.lon}`
+      + `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m`
+      + `&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph`
+      + `&timezone=America%2FNew_York&forecast_days=1`;
+    const r = await (await fetch(u)).json(), c = r.current;
+    const [desc, ic] = WMO(c.weather_code), feels = Math.round(c.apparent_temperature);
+    wtemp.textContent = Math.round(c.temperature_2m) + '°';
+    wdesc.textContent = desc; wicon.textContent = ic;
+    wfeels.innerHTML = `Feels like <b>${feels}°</b> · ${vibe(feels, c.wind_speed_10m)}`;
+    wmeta.innerHTML = `${WEATHER.place} · H <b>${Math.round(r.daily.temperature_2m_max[0])}°</b>  L <b>${Math.round(r.daily.temperature_2m_min[0])}°</b>`;
+  } catch (e) { wdesc.textContent = 'Weather offline'; }
+}
+
+/* ---------- focus list (dash notes, OK crosses out) ---------- */
+let focusItems = [];
+function renderFocus() {
+  focusItems = JSON.parse(Bridge.getFocus() || '[]').slice(0, 8);
+  const ul = document.getElementById('focus'); ul.innerHTML = '';
+  if (!focusItems.length)
+    ul.innerHTML = `<li class="empty">Copy your list in Notes, then on your Mac run<br><code>./tv.sh focus</code></li>`;
+  focusItems.forEach((it, i) => {
+    const li = document.createElement('li'); li.dataset.f = 1; li.className = it.done ? 'done' : '';
+    li.innerHTML = `<span class="dash">–</span><span class="txt"></span>`; li.lastChild.textContent = it.t;
+    li.onclick = () => { focusItems[i].done = !focusItems[i].done; Bridge.setFocus(JSON.stringify(focusItems)); li.classList.toggle('done'); count(); };
+    ul.appendChild(li);
+  });
+  count();
+}
+function count() {
+  const d = focusItems.filter(x => x.done).length;
+  fcount.textContent = focusItems.length ? `${d} of ${focusItems.length} done · OK to cross out` : 'Nothing set yet';
+}
+
+/* ---------- app tiles ---------- */
+function tile(app) {
+  const t = document.createElement('div'); t.className = 'tile'; t.dataset.f = 1;
+  if (app.banner) t.innerHTML = `<img src="${app.banner}" alt="">`;
+  else {
+    t.innerHTML = app.icon ? `<img class="icon" src="${app.icon}" alt="">` : `<div class="letter">${app.name[0]}</div>`;
+    t.innerHTML += `<div class="label"></div>`; t.querySelector('.label').textContent = app.name;
+  }
+  t.onclick = () => Bridge.launch(app.pkg);
+  return t;
+}
+const favsEl = document.getElementById('favs'), restEl = document.getElementById('rest');
+function renderApps() {
+  const apps = JSON.parse(Bridge.apps());
+  const favs = FAVS.map(p => apps.find(a => a.pkg === p)).filter(Boolean);
+  const rest = apps.filter(a => !FAVS.includes(a.pkg)).sort((a,b) => a.name.localeCompare(b.name));
+  favsEl.innerHTML = ''; restEl.innerHTML = '';
+  favs.forEach(a => favsEl.appendChild(tile(a)));
+  rest.forEach(a => restEl.appendChild(tile(a)));
+}
+
+/* ---------- remote navigation (arrow keys + OK) ---------- */
+let cur = null;
+function setCur(el) {
+  if (!el) return;
+  if (cur) cur.classList.remove('focused');
+  cur = el; cur.classList.add('focused');
+  const box = el.closest('.grid.rest');
+  if (box) {   // keep the focused tile visible inside the right-hand panel
+    const top = el.offsetTop - box.offsetTop, bottom = top + el.offsetHeight;
+    if (bottom > box.scrollTop + box.clientHeight - 20) box.scrollTop = bottom - box.clientHeight + 30;
+    if (top < box.scrollTop + 20) box.scrollTop = Math.max(0, top - 30);
+  }
+}
+function move(dir) {
+  const all = [...document.querySelectorAll('[data-f]')];
+  if (!cur || !document.body.contains(cur)) return setCur(favsEl.firstChild || all[0]);
+  const a = cur.getBoundingClientRect(), ax = a.left + a.width/2, ay = a.top + a.height/2;
+  let best = null, bestScore = Infinity;
+  for (const el of all) {
+    if (el === cur) continue;
+    const b = el.getBoundingClientRect(), bx = b.left + b.width/2, by = b.top + b.height/2;
+    const dx = bx - ax, dy = by - ay;
+    const ok = dir==='ArrowRight' ? dx > 10 : dir==='ArrowLeft' ? dx < -10 : dir==='ArrowDown' ? dy > 10 : dy < -10;
+    if (!ok) continue;
+    const horiz = dir==='ArrowLeft' || dir==='ArrowRight';
+    const score = (horiz ? Math.abs(dx) : Math.abs(dy)) + (horiz ? Math.abs(dy) : Math.abs(dx)) * 2.2;
+    if (score < bestScore) { bestScore = score; best = el; }
+  }
+  if (best) setCur(best);
+}
+document.addEventListener('keydown', e => {
+  if (e.key.startsWith('Arrow')) { e.preventDefault(); move(e.key); }
+  else if (e.key === 'Enter' || e.keyCode === 23) { e.preventDefault(); cur && cur.click(); }
+});
+
+/* ---------- boot ---------- */
+window.refresh = () => { renderFocus(); renderApps(); cur = null; setCur(favsEl.firstChild); };
+tick(); setInterval(tick, 5000);
+weather(); setInterval(weather, 30 * 60 * 1000);
+refresh();
+</script>
+</body>
+</html>
